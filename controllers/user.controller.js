@@ -4,7 +4,10 @@ const User = require('../models/user.model.js')
 const createUser = async (req, res) => {
     try {
         const { name, bio, phone, email, password, is_Admin, is_Public, access_token } = req.body;
-        const avatar = req.file;
+        const userExists = await User.userExists(email);
+        if (userExists) {
+            return res.status(400).json({ error: 'User with this email already exists!' });
+        }
         const newUser = new User({
             name,
             bio,

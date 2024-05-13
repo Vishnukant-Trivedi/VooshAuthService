@@ -89,6 +89,15 @@ UserSchema.methods.generateToken = async function(){
     }
 };
 
+UserSchema.statics.userExists = async function(email) {
+    try {
+        const user = await this.findOne({ email });
+        return user ? true : false;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;
