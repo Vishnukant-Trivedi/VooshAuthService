@@ -1,17 +1,16 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const userRoute = require('./routes/user.route.js')
-const dotenv = require('dotenv');
-dotenv.config();
+require('dotenv').config();
 const app = express()
 
-// middleware
-app.use(express.json());
-app.use(express.urlencoded({extended:false}));
 
 // routes
 app.use('/api/user', userRoute);
 
+// middleware
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
 app.use('/profile', express.static('upload/images'));
 
 app.get('/', (req,res) => {
