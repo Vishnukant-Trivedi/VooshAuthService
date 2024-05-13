@@ -15,9 +15,8 @@ const upload = multer({
     storage:storage
 })
 router.post('/', upload.single('photo'), userController.createUser);
-
-router.get('/',authMiddleware.checkAuthToken, userController.getUsers); 
-
+router.post('/login',upload.none(),userController.loginUser);
+router.get('/all-users',authMiddleware.checkAuthToken, userController.getUsers); 
 router.get('/:id', userController.getUser); 
 
 module.exports = router;
