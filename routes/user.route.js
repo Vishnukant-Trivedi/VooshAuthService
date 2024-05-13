@@ -16,6 +16,8 @@ const upload = multer({
 })
 router.post('/', upload.single('photo'), userController.createUser);
 router.post('/login',upload.none(),userController.loginUser);
+router.get('/login/google');
+router.get('/login/github');
 router.get('/all-users',authMiddleware.checkAuthToken, userController.getUsers); 
 router.get('/:id', userController.getUser); 
 

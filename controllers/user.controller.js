@@ -28,8 +28,7 @@ const createUser = async (req, res) => {
             is_Public,
             access_token
         });
-        res.status(200).json({message: newUser, token: await newUser.generateToken(), userId: newUser._id.toString(),
-        });
+        res.status(200).json({message: "Registration successful! Please login to use services."});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -55,8 +54,14 @@ const loginUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        const users = await User.find({});
-        res.status(200).json(users);
+        const {is_Admin, userId} = res.isVerified
+        if(is_Admin){
+            let allProfiles = await User.find({});
+            allProfiles = allProfiles.filter(profile => profile._id.toString() !== userId.toString());
+            return res.status(200).json(allProfiles);
+        }
+        const publicProfiles = await User.find({ is_Public: true });
+        res.status(200).json(publicProfiles);
     } catch (err){
         res.status(500).json({message: err.message})
     }

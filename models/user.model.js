@@ -27,21 +27,22 @@ const UserSchema = mongoose.Schema({
     },
     photo:{
         type: String,
-        required:false
+        required:[false, "Please upload your photo"]
     },
     is_Admin:{
         type: Boolean,
-        required: true,
+        required: [true, "Please let us know! Are you admin user?"],
         default: false
     },
     is_Public:{
         type:Boolean,
-        required: true,
+        required: [true, "Please let us know! Is your account public?"],
         default: false
     },
-    access_token:{
+    provider:{
         type: String,
-        required: false
+        required: false,
+        default: "Normal"
     }
 },
 {
