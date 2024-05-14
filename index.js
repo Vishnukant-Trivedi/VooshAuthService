@@ -2,12 +2,14 @@ const express = require('express')
 const mongoose = require('mongoose')
 const userRoute = require('./routes/user.route.js')
 const cookieParser = require('cookie-parser');
+const { swaggerServer, swaggerSetup } = require('./config.js')
 require('dotenv').config();
 const app = express()
 
 
 // routes
 app.use('/api/user', userRoute);
+app.use('/api-docs', swaggerServer, swaggerSetup);
 
 // middleware
 app.use(express.json()); 
@@ -20,7 +22,7 @@ app.get('/', (req,res) => {
 })
 
 
-mongoose.connect("mongodb+srv://vishnutrd11:qgZvua2xZigWKkcS@cluster0.lrkquyr.mongodb.net/Voosh_db?retryWrites=true&w=majority&appName=Cluster0")
+mongoose.connect(process.env.MONGO_URL)
 .then(() => {
     console.log("Connected to Database");
     app.listen(process.env.PORT, () => {
