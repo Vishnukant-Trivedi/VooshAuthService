@@ -157,6 +157,14 @@ const logoutUser = async (req, res) => {
     });
     res.status(200).json({ message: 'Log-out successful' });
 }
+
+const getCode = async (req, res) => {
+    const { code }= req.query;
+    if (!code) {
+        return res.status(400).json({ error: 'Missing code parameter' });
+    }
+    res.status(200).json({ message: 'Code received successfully', code });
+}
  
 module.exports = {
     getUsers,
@@ -167,5 +175,6 @@ module.exports = {
     updateUserUploadedPhoto,
     updateUserPhotoUrl,
     googleLogin,
-    logoutUser
+    logoutUser,
+    getCode
 };

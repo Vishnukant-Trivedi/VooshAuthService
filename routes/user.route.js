@@ -24,7 +24,6 @@ router.post('/login', upload.none(), userController.loginUser);
 // Log out API
 router.get('/logout', upload.none(), userController.logoutUser);
 
-
 // Login SSO
 router.post('/login/google', upload.none(), authMiddleware.getUserToken, authMiddleware.getUserData, userController.googleLogin);
 
@@ -42,5 +41,8 @@ router.patch('/upload/photo/:id',upload.single('photo'), authMiddleware.checkAut
 
 // Update user data by url {photo}
 router.patch('/upload/photo/url/:id',upload.none(), authMiddleware.checkAuthToken, userController.updateUserPhotoUrl);
+
+// Google code
+router.get('/code', userController.getCode);
 
 module.exports = router;
