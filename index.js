@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const userRoute = require('./routes/user.route.js')
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const app = express()
 
@@ -11,6 +12,7 @@ app.use('/api/user', userRoute);
 // middleware
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
+app.use(cookieParser());
 app.use('/profile', express.static('upload/images'));
 
 app.get('/', (req,res) => {

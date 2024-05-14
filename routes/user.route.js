@@ -21,6 +21,10 @@ router.post('/', upload.single('photo'), userController.createUser);
 // Login API
 router.post('/login', upload.none(), userController.loginUser);
 
+// Log out API
+router.get('/logout', upload.none(), userController.logoutUser);
+
+
 // Login SSO
 router.post('/login/google', upload.none(), authMiddleware.getUserToken, authMiddleware.getUserData, userController.googleLogin);
 

@@ -37,6 +37,10 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
         const token = await user.generateToken();
+        res.cookie('token', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000 // 1 day in milliseconds
+        });
         return res.status(200).json({message:"Login successful",token: token });
     } catch (error) {
         return res.status(500).json({ message: error });
@@ -146,6 +150,13 @@ const googleLogin = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 }
+
+const logoutUser = async (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true
+    });
+    res.status(200).json({ message: 'Log-out successful' });
+}
  
 module.exports = {
     getUsers,
@@ -155,5 +166,6 @@ module.exports = {
     updateUserDetails,
     updateUserUploadedPhoto,
     updateUserPhotoUrl,
-    googleLogin
+    googleLogin,
+    logoutUser
 };
