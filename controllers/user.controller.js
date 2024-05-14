@@ -3,7 +3,7 @@ const User = require('../models/user.model.js')
 
 const createUser = async (req, res) => {
     try {
-        const { name, bio, phone, email, password, is_Admin, is_Public, access_token } = req.body;
+        const { name, bio, phone, email, password, is_Admin, is_Public } = req.body;
         const userExists = await User.userExists(email);
         if (userExists) {
             return res.status(400).json({ error: 'User with this email already exists!' });
@@ -17,8 +17,7 @@ const createUser = async (req, res) => {
             photo,
             password,
             is_Admin,
-            is_Public,
-            access_token
+            is_Public
         });
         const savedUser = await newUser.save({
             name,
@@ -90,20 +89,55 @@ const updateUserDetails = async (req, res) => {
         }
         const updates = req.body;
         const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
-        console.log(updatedUser);
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
-        return res.status(200).json(updatedUser);
+        return res.status(200).json({message: "User updated successfully"});
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 };
+
+const updateUserUploadedPhoto = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        if(res.isVerified.userId != userId){
+            return res.status(404).json({message: "Unauthorized user"});
+        }
+        const photo = `${process.env.LOCAL_DEV_URL}${req.file.filename}`
+        const updatedUser = await User.findByIdAndUpdate(userId, {photo}, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        return res.status(200).json({message: "User photo updated successfully"});
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const updateUserPhotoUrl = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        if(res.isVerified.userId != userId){
+            return res.status(404).json({message: "Unauthorized user"});
+        }
+        const { photo } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(userId, {photo}, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        return res.status(200).json({message: "User photo url updated successfully"});
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
  
 module.exports = {
     getUsers,
     getUser,
     createUser,
     loginUser,
-    updateUserDetails
+    updateUserDetails,
+    updateUserUploadedPhoto,
+    updateUserPhotoUrl
 };

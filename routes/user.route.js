@@ -22,8 +22,7 @@ router.post('/', upload.single('photo'), userController.createUser);
 router.post('/login', upload.none(), userController.loginUser);
 
 // Login SSO
-router.get('/login/google');
-router.get('/login/github');
+router.get('/login/google', userController.googleLogin);
 
 // Get all user API for {admin, normal} user
 router.get('/all-users', authMiddleware.checkAuthToken, userController.getUsers); 
@@ -31,7 +30,13 @@ router.get('/all-users', authMiddleware.checkAuthToken, userController.getUsers)
 // Get profile API for both {admin, normal} user
 router.get('/profile/:id', authMiddleware.checkAuthToken, userController.getUser); 
 
-// Update user data
-router.patch('/:id',authMiddleware.checkAuthToken)
+// Update user data {name,bio,phone,email,photo,password,is_Admin,is_Public}
+router.patch('/:id', upload.none(), authMiddleware.checkAuthToken, userController.updateUserDetails);
+
+// Update user data by upload {photo}
+router.patch('/upload/photo/:id',upload.single('photo'), authMiddleware.checkAuthToken, userController.updateUserUploadedPhoto);
+
+// Update user data by url {photo}
+router.patch('/upload/photo/url/:id',upload.none(), authMiddleware.checkAuthToken, userController.updateUserPhotoUrl);
 
 module.exports = router;
