@@ -22,7 +22,7 @@ router.post('/', upload.single('photo'), userController.createUser);
 router.post('/login', upload.none(), userController.loginUser);
 
 // Login SSO
-router.get('/login/google', userController.googleLogin);
+router.post('/login/google', upload.none(), authMiddleware.getUserToken, authMiddleware.getUserData, userController.googleLogin);
 
 // Get all user API for {admin, normal} user
 router.get('/all-users', authMiddleware.checkAuthToken, userController.getUsers); 

@@ -1,6 +1,5 @@
 const User = require('../models/user.model.js')
 
-
 const createUser = async (req, res) => {
     try {
         const { name, bio, phone, email, password, is_Admin, is_Public } = req.body;
@@ -19,19 +18,10 @@ const createUser = async (req, res) => {
             is_Admin,
             is_Public
         });
-        const savedUser = await newUser.save({
-            name,
-            bio,
-            phone,
-            email,
-            password,
-            is_Admin,
-            is_Public,
-            access_token
-        });
-        res.status(200).json({message: "Registration successful! Please login to use services."});
+        const savedUser = await newUser.save();
+        return res.status(200).json({message: "Registration successful! Please login to use services."});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -47,9 +37,9 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
         const token = await user.generateToken();
-        res.status(200).json({message:"Login successful",token: token });
+        return res.status(200).json({message:"Login successful",token: token });
     } catch (error) {
-        res.status(500).json({ message: error });
+        return res.status(500).json({ message: error });
     }
 };
 
@@ -62,9 +52,9 @@ const getUsers = async (req, res) => {
             return res.status(200).json(allProfiles);
         }
         const publicProfiles = await User.find({ is_Public: true });
-        res.status(200).json(publicProfiles);
+        return res.status(200).json(publicProfiles);
     } catch (err){
-        res.status(500).json({message: err.message})
+        return res.status(500).json({message: err.message})
     }
 }
 
@@ -75,9 +65,9 @@ const getUser = async (req, res) => {
             return res.status(404).json({message: "Unauthorized user"});
         }
         const user = await User.findById(id);
-        res.status(200).json(user);
+        return res.status(200).json(user);
     } catch (err){
-        res.status(500).json({message: err.message})
+        return res.status(500).json({message: err.message})
     }
 }
 
@@ -131,6 +121,31 @@ const updateUserPhotoUrl = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 }
+
+const googleLogin = async (req, res) => {
+    try {
+        const { name, email} = res.userMetaData;
+        const photo = res.userMetaData.picture;
+        delete res.userMetaData;
+        const userExists = await User.userExists(email);
+        if (userExists) {
+            const user = await User.findOne({ email });
+            const token = await user.generateToken();
+            return res.status(200).json({message:"Login successful",token: token });
+        }
+        const newUser = new User({
+            name,
+            email,
+            photo,
+            password:email,
+            provider: "Google"
+        });
+        const savedUser = await newUser.save();
+        return res.status(200).json({message: "Registration successful! Please login to use services."});   
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
  
 module.exports = {
     getUsers,
@@ -139,5 +154,6 @@ module.exports = {
     loginUser,
     updateUserDetails,
     updateUserUploadedPhoto,
-    updateUserPhotoUrl
+    updateUserPhotoUrl,
+    googleLogin
 };

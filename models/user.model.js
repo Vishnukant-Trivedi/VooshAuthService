@@ -9,7 +9,8 @@ const UserSchema = mongoose.Schema({
     },
     bio:{
         type: String,
-        required: [true, "Please enter your Bio"]
+        required: [false, "Please enter your Bio"],
+        default:"I am champion"
     },
     phone:{
         type: String,
@@ -19,7 +20,7 @@ const UserSchema = mongoose.Schema({
     email:{
         type: String,
         required: [true, "Please enter your Email"],
-        default:"yourName@email.com"
+        default:"you@email.com"
     },
     password:{
         type: String,
@@ -37,7 +38,7 @@ const UserSchema = mongoose.Schema({
     is_Public:{
         type:Boolean,
         required: [true, "Please let us know! Is your account public?"],
-        default: false
+        default: true
     },
     provider:{
         type: String,
