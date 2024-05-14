@@ -11,7 +11,7 @@ const checkAuthToken = async (req, res, next) => {
         res.isVerified = isVerified;
         next();   
     } catch (error) {
-        next(error);
+        res.status(500).json({message: error.message + " Token"})
     }
 }
 

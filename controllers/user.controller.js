@@ -8,11 +8,13 @@ const createUser = async (req, res) => {
         if (userExists) {
             return res.status(400).json({ error: 'User with this email already exists!' });
         }
+        const photo = `${process.env.LOCAL_DEV_URL}${req.file.filename}`
         const newUser = new User({
             name,
             bio,
             phone,
             email,
+            photo,
             password,
             is_Admin,
             is_Public,
@@ -70,16 +72,38 @@ const getUsers = async (req, res) => {
 const getUser = async (req, res) => {
     try{
         const { id } = req.params;
+        if(res.isVerified.userId != id){
+            return res.status(404).json({message: "Unauthorized user"});
+        }
         const user = await User.findById(id);
         res.status(200).json(user);
     } catch (err){
         res.status(500).json({message: err.message})
     }
 }
+
+const updateUserDetails = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        if(res.isVerified.userId != userId){
+            return res.status(404).json({message: "Unauthorized user"});
+        }
+        const updates = req.body;
+        const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
+        console.log(updatedUser);
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        return res.status(200).json(updatedUser);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
  
 module.exports = {
     getUsers,
     getUser,
     createUser,
-    loginUser
+    loginUser,
+    updateUserDetails
 };

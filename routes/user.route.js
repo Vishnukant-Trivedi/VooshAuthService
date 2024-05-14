@@ -14,11 +14,24 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage:storage
 })
+
+// Create User API
 router.post('/', upload.single('photo'), userController.createUser);
-router.post('/login',upload.none(),userController.loginUser);
+
+// Login API
+router.post('/login', upload.none(), userController.loginUser);
+
+// Login SSO
 router.get('/login/google');
 router.get('/login/github');
-router.get('/all-users',authMiddleware.checkAuthToken, userController.getUsers); 
-router.get('/:id', userController.getUser); 
+
+// Get all user API for {admin, normal} user
+router.get('/all-users', authMiddleware.checkAuthToken, userController.getUsers); 
+
+// Get profile API for both {admin, normal} user
+router.get('/profile/:id', authMiddleware.checkAuthToken, userController.getUser); 
+
+// Update user data
+router.patch('/:id',authMiddleware.checkAuthToken)
 
 module.exports = router;
